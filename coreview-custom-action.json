@@ -1,0 +1,83 @@
+{
+  "name": "Offboard-M365User",
+  "displayName": "Offboard Microsoft 365 User",
+  "description": "Cancels all calendar events for a specified user as part of the offboarding process",
+  "version": "1.0.0",
+  "type": "custom-action",
+  "category": "User Management",
+  "permissions": [
+    "Calendars.ReadWrite.All",
+    "User.Read.All"
+  ],
+  "parameters": [
+    {
+      "name": "UserEmail",
+      "displayName": "User Email",
+      "description": "The email address of the user to offboard",
+      "type": "string",
+      "required": true,
+      "validation": {
+        "pattern": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
+        "message": "Please enter a valid email address"
+      }
+    },
+    {
+      "name": "TenantId",
+      "displayName": "Tenant ID",
+      "description": "The Microsoft 365 tenant ID (optional - will use current context if not provided)",
+      "type": "string",
+      "required": false
+    },
+    {
+      "name": "Comment",
+      "displayName": "Cancellation Comment",
+      "description": "Comment to include when canceling calendar events",
+      "type": "string",
+      "required": false,
+      "defaultValue": "Event cancelled as part of user offboarding process"
+    }
+  ],
+  "script": {
+    "path": "Offboard-M365User-Coreview.ps1",
+    "type": "powershell",
+    "timeout": 300
+  },
+  "outputs": [
+    {
+      "name": "TotalEvents",
+      "description": "Total number of calendar events found"
+    },
+    {
+      "name": "SuccessfullyCanceled",
+      "description": "Number of events successfully canceled"
+    },
+    {
+      "name": "FailedToCancel",
+      "description": "Number of events that failed to cancel"
+    },
+    {
+      "name": "CanceledEvents",
+      "description": "Array of canceled event details"
+    }
+  ],
+  "triggers": [
+    {
+      "type": "manual",
+      "description": "Manual execution by authorized users"
+    },
+    {
+      "type": "workflow",
+      "description": "Can be called from coreview workflows"
+    }
+  ],
+  "audit": {
+    "enabled": true,
+    "logLevel": "detailed",
+    "retentionDays": 90
+  },
+  "security": {
+    "requiresApproval": true,
+    "approvalRoles": ["User Administrator", "Global Administrator"],
+    "executionRoles": ["User Administrator", "Help Desk Administrator"]
+  }
+}
